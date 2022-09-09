@@ -50,3 +50,12 @@ export const createAvion= function(avion) {
     return avionToSave;
 
 }
+
+export const findAvionById = function(id) {
+  const avionFound =   db.find((avion)=>{
+        if(avion.id === id){
+            return avion;
+        }
+    })
+    return avionFound;
+}

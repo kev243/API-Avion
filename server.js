@@ -3,56 +3,81 @@
 import express from 'express';
 import db from './data/database';
 import bodyParser from 'body-parser';
-import {validate, createAvion} from './business/AvionsServices';
+import { validate, createAvion, findAvionById} from './business/AvionsServices';
 
 
 const app = express();
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: false}))
+app.use(bodyParser.urlencoded({ extended: false }))
 
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
     res.send('hello kevin nimi');
-  });
+});
 
-  //on va crée le CRUD API
+//on va crée le CRUD API
 
-  //recuperer tous les avions
-  app.get('/api/v1/avions', (req, res)=>{
+//recuperer tous les avions
+app.get('/api/v1/avions', (req, res) => {
     res.status(200).send({
-        success:true ,
-        message:'avions récupéré avec succés',
-        avions:db
+        success: true,
+        message: 'avions récupéré avec succés',
+        avions: db
     });
-  });
+});
 
 
-  //ajouter un avion 
-  app.post('/api/v1/avions', (req, res)=>{
+//ajouter un avion 
+app.post('/api/v1/avions', (req, res) => {
 
-    console.log('req',req.body.avionneur)
-     const avion =req.body;
-     const valid = validate(avion);
-
-    if(!valid.success){
+    console.log('req', req.body.avionneur)
+    const avion = req.body;
+    const valid = validate(avion);
+    //validation 
+    if (!valid.success) {
         res.status(400).send(valid)
     }
 
-// on cree une variable pour stoquer les donnée
-   const avionToSave = createAvion(avion)
-
-        res.status(200).send({
-        success:true ,
-        message:'avions ajoutê avec succés',
-        avion:avionToSave
+    // on cree une variable pour stoquer les donnée
+    const avionToSave = createAvion(avion)
+    //retour
+    res.status(200).send({
+        success: true,
+        message: 'avions ajoutê avec succés',
+        avion: avionToSave
     });
-  
-  });
+
+});
+
+//GET BY ID
+
+app.get('/api/v1/avions/:id', (req, res) => {
+  const id =parseInt(req.params.id,10);
+  const avion = findAvionById(id)
+ if (avion){
+    res.status(200).send({
+        success: true,
+        message: 'avions recuperer ê avec succés',
+        avion
+    });
+ }else{
+    res.status(404).send({
+        success: false,
+        message: 'avion not found',
+        avion
+    });
+
+ }
+
+ 
+});
 
 
 
-  //le port ou il va ecoutter 
-  const PORT = 3000;
-  app.listen(PORT ,()=> {
-    console.log( 'serveur demarré sur le port '+ PORT )
-    console.log( 'http://localhost:'+ PORT )
-  })
+
+
+//le port ou il va ecoutter 
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log('serveur demarré sur le port ' + PORT)
+    console.log('http://localhost:' + PORT)
+})
