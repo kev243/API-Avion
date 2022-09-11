@@ -59,3 +59,62 @@ export const findAvionById = function(id) {
     })
     return avionFound;
 }
+
+export const deleteAvionById = function(id) {
+
+    const avionFound =   db.find((avion,index)=>{
+        if(avion.id === id){
+            db.splice(index,1)
+            return true
+        }
+    })
+    return avionFound;
+
+}
+
+/**
+ * Fontion qui met a jour un avion en BDD
+ * @param {*} id 
+ * @param {*} newAvion 
+ * @returns 
+ */
+
+export const updateAvionById = function(id,newAvion) {
+    let avionFound;
+    let itemIndex;
+
+    db.map((avion,index)=>{
+        if (avion.id == id){
+            avionFound=avion;
+            itemIndex=index;
+        }
+    })
+    if (!avionFound){
+        return false;
+    }
+    if (!validate(newAvion).success){
+        return false
+    }
+
+    //merge
+    const updateAvion={
+        "id":avionFound.id,
+        "avionneur":newAvion.avionneur||avion.avionneur,
+        "description": newAvion.description||avion.description,
+        "model":newAvion.model||avion.model,
+        "annee":newAvion.annee||avion.annee,
+        "service":newAvion.service||avion.service,
+        "place": newAvion.place||avion.place,
+        "interieur":newAvion.interieur||avion.interieur,
+        "incident":newAvion.incident||avion.incident,
+    }
+
+    //mis a jour en bd
+    db.splice(itemIndex,1, updateAvion)
+    return updateAvion
+
+
+
+
+
+}

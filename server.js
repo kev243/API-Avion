@@ -3,7 +3,7 @@
 import express from 'express';
 import db from './data/database';
 import bodyParser from 'body-parser';
-import { validate, createAvion, findAvionById} from './business/AvionsServices';
+import { validate, createAvion, findAvionById,deleteAvionById, updateAvionById} from './business/AvionsServices';
 
 
 const app = express();
@@ -71,6 +71,56 @@ app.get('/api/v1/avions/:id', (req, res) => {
  
 });
 
+
+//supprimer un avion par id 
+app.delete('/api/v1/avions/:id', (req, res) => {
+    const id =parseInt(req.params.id,10);
+    const  avion = deleteAvionById(id)
+    if(avion){
+        res.status(200).send({
+            success: true,
+            message: 'avions supprimer  avec succés',
+            
+        });
+
+    }else{
+
+        res.status(404).send({
+            success: false,
+            message: 'avion not found',
+            avion
+        });
+
+    }
+
+})
+
+//mettre a jour un avion
+
+app.put('/api/v1/avions/:id', (req, res) => {
+    const id =parseInt(req.params.id,10);
+    const newAvion =req.body;
+   const avion= updateAvionById(id,newAvion);
+   if(avion){
+    res.status(200).send({
+        success: true,
+        message: 'avions mis à jour avec succés',
+        
+    });
+
+}else{
+
+    res.status(404).send({
+        success: false,
+        message: 'avion not found',
+        avion
+    });
+
+}
+
+  
+
+})
 
 
 
